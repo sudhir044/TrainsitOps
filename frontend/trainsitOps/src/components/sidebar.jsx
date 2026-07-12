@@ -1,4 +1,4 @@
-import { NavLink, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard,
   Car,
@@ -28,6 +28,7 @@ const navItems = [
 
 export default function Sidebar() {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogout = () => {
     api.logout();
@@ -50,29 +51,31 @@ export default function Sidebar() {
       <div className="sidebar-section">
         <div className="section-title">Dashboard</div>
         <nav className="sidebar-nav">
-          {navItems.map((item) => (
-            <NavLink
-              key={item.path}
-              to={item.path}
-              className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
-            >
-              {({ isActive }) => (
-                <>
-                  <span className="nav-icon">{item.icon}</span>
-                  <span className="nav-label">{item.label}</span>
-                  {isActive && <div className="active-indicator"></div>}
-                </>
-              )}
-            </NavLink>
-          ))}
+          {navItems.map((item) => {
+            const isActive = location.pathname === item.path;
+            return (
+              <Link
+                key={item.path}
+                to={item.path}
+                className={`nav-item ${isActive ? 'active' : ''}`}
+              >
+                <span className="nav-icon">{item.icon}</span>
+                <span className="nav-label">{item.label}</span>
+                {isActive && <div className="active-indicator"></div>}
+              </Link>
+            );
+          })}
         </nav>
       </div>
 
-      <div className="sidebar-footer">
-        <button onClick={handleLogout} className="logout-btn">
-          <LogOut size={20} />
-          <span>Log Out</span>
-        </button>
+      <div className="sidebar-section">
+        <div className="section-title">Session</div>
+        <div className="sidebar-footer" style={{ padding: '0px' }}>
+          <button onClick={handleLogout} className="logout-btn" style={{ width: '100%' }}>
+            <LogOut size={20} />
+            <span>Log Out</span>
+          </button>
+        </div>
       </div>
     </aside>
   );

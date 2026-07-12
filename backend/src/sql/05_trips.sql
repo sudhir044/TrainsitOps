@@ -7,6 +7,9 @@ CREATE TABLE trips (
 
     driver_id INTEGER
         REFERENCES drivers(id),
+ ALTER TABLE trips
+ADD COLUMN route_notes TEXT;
+
 
     source VARCHAR(150) NOT NULL,
 
