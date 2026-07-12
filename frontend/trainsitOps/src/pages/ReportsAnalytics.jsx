@@ -1,16 +1,50 @@
+import { useEffect, useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { api } from '../utils/api';
 import './ReportsAnalytics.css';
 
 export default function ReportsAnalytics() {
-  const data = [
-    { name: 'Jan', revenue: 4000, cost: 2400 },
-    { name: 'Feb', revenue: 3000, cost: 1398 },
-    { name: 'Mar', revenue: 2000, cost: 9800 },
-    { name: 'Apr', revenue: 2780, cost: 3908 },
-    { name: 'May', revenue: 1890, cost: 4800 },
-    { name: 'Jun', revenue: 2390, cost: 3800 },
-    { name: 'Jul', revenue: 3490, cost: 4300 },
-  ];
+  const [summary, setSummary] = useState(null);
+  const [expenseData, setExpenseData] = useState([]);
+  const [fuelData, setFuelData] = useState([]);
+  const [driverData, setDriverData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadReports() {
+      try {
+        const [sumRes, expRes, fuelRes, driverRes] = await Promise.all([
+          api.getSummaryReport(),
+          api.getExpenseReport(),
+          api.getFuelReport(),
+          api.getDriverReport(),
+        ]);
+        setSummary(sumRes.data);
+        setExpenseData(expRes.data);
+        setFuelData(fuelRes.data);
+        setDriverData(driverRes.data);
+      } catch (err) {
+        console.error('Error loading reports:', err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadReports();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="page-content flex items-center justify-center p-12">
+        <p className="text-secondary text-lg">Loading operational analytics reports...</p>
+      </div>
+    );
+  }
+
+  // Format Recharts data keys
+  const chartData = expenseData.map(item => ({
+    name: item.expense_type,
+    amount: item.total
+  }));
 
   return (
     <div className="page-content">
@@ -19,94 +53,104 @@ export default function ReportsAnalytics() {
           <h1 className="text-2xl font-bold">Reports & Analytics</h1>
           <p className="text-secondary text-sm">Actionable insights from fleet data</p>
         </div>
-        <div className="flex gap-3">
-          <select className="input-field w-auto">
-            <option>Last 6 Months</option>
-            <option>Last Year</option>
-          </select>
-          <button className="btn-primary">Download PDF</button>
-        </div>
       </div>
 
       <div className="analytics-grid mb-6">
         <div className="card metric-card">
-          <div className="metric-title">Total Revenue</div>
-          <div className="metric-value">$ 124,500</div>
-          <div className="metric-trend text-green">+12.5% vs last period</div>
+          <div className="metric-title">Total Active Drivers</div>
+          <div className="metric-value">{summary?.totalDrivers || 0}</div>
+          <div className="metric-trend text-green">Roster strength</div>
         </div>
         <div className="card metric-card">
-          <div className="metric-title">Total Expenses</div>
-          <div className="metric-value">$ 45,210</div>
-          <div className="metric-trend text-red">+4.2% vs last period</div>
+          <div className="metric-title">Total General Expenses</div>
+          <div className="metric-value">${summary?.totalExpenses || 0}</div>
+          <div className="metric-trend text-red">Operational fees</div>
         </div>
         <div className="card metric-card">
-          <div className="metric-title">Avg. Cost per Trip</div>
-          <div className="metric-value">$ 34.50</div>
-          <div className="metric-trend text-green">-1.5% vs last period</div>
+          <div className="metric-title">Total Fuel Purchases</div>
+          <div className="metric-value">${summary?.totalFuelCost || 0}</div>
+          <div className="metric-trend text-orange">Fuel logs</div>
         </div>
       </div>
 
-      <div className="charts-container">
+      <div className="charts-container" style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '1.5rem' }}>
+        
+        {/* Main Chart */}
         <div className="card chart-main">
-          <h3 className="font-semibold text-lg mb-4">Revenue vs Expenses</h3>
-          <div className="chart-wrapper h-[300px]" style={{ height: '300px' }}>
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={data}>
-                <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" vertical={false} />
-                <XAxis dataKey="name" stroke="var(--text-secondary)" tickLine={false} axisLine={false} />
-                <YAxis stroke="var(--text-secondary)" tickLine={false} axisLine={false} tickFormatter={(value) => `$${value/1000}k`} />
-                <Tooltip 
-                  contentStyle={{ backgroundColor: 'var(--bg-panel)', borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}
-                  itemStyle={{ color: 'var(--text-primary)' }}
-                />
-                <Bar dataKey="revenue" fill="#3b82f6" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="cost" fill="#f58220" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
+          <h3 className="font-semibold text-lg mb-4">Expenses by Category</h3>
+          <div className="chart-wrapper" style={{ height: '300px' }}>
+            {chartData.length === 0 ? (
+              <p className="text-secondary text-sm text-center py-12">No expense logs available for chart representation.</p>
+            ) : (
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={chartData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" vertical={false} />
+                  <XAxis dataKey="name" stroke="var(--text-secondary)" tickLine={false} axisLine={false} />
+                  <YAxis stroke="var(--text-secondary)" tickLine={false} axisLine={false} tickFormatter={(value) => `$${value}`} />
+                  <Tooltip 
+                    contentStyle={{ backgroundColor: 'var(--bg-panel)', borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}
+                    itemStyle={{ color: 'var(--text-primary)' }}
+                  />
+                  <Bar dataKey="amount" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            )}
           </div>
         </div>
         
+        {/* Fuel Efficiency List */}
         <div className="card chart-side">
-          <h3 className="font-semibold text-lg mb-4">Fleet Utilization</h3>
+          <h3 className="font-semibold text-lg mb-4">Fuel Log Summary</h3>
           <div className="utilization-bars">
-             <div className="util-item mb-4">
-               <div className="flex justify-between text-sm mb-1">
-                 <span>Vans</span>
-                 <span>75%</span>
-               </div>
-               <div className="bar-bg">
-                 <div className="bar-fill bg-blue-500" style={{ width: '75%', backgroundColor: '#3b82f6' }}></div>
-               </div>
-             </div>
-             <div className="util-item mb-4">
-               <div className="flex justify-between text-sm mb-1">
-                 <span>SUVs</span>
-                 <span>45%</span>
-               </div>
-               <div className="bar-bg">
-                 <div className="bar-fill" style={{ width: '45%', backgroundColor: '#f58220' }}></div>
-               </div>
-             </div>
-             <div className="util-item mb-4">
-               <div className="flex justify-between text-sm mb-1">
-                 <span>Sedans</span>
-                 <span>90%</span>
-               </div>
-               <div className="bar-bg">
-                 <div className="bar-fill bg-green" style={{ width: '90%' }}></div>
-               </div>
-             </div>
-             <div className="util-item">
-               <div className="flex justify-between text-sm mb-1">
-                 <span>Trucks</span>
-                 <span>20%</span>
-               </div>
-               <div className="bar-bg">
-                 <div className="bar-fill" style={{ width: '20%', backgroundColor: '#ef4444' }}></div>
-               </div>
-             </div>
+            {fuelData.map((item, index) => (
+              <div className="util-item mb-4" key={index}>
+                <div className="flex justify-between text-sm mb-1">
+                  <span>{item.registration_number}</span>
+                  <span className="font-medium">{item.total_liters} L (${item.total_cost})</span>
+                </div>
+              </div>
+            ))}
+            {fuelData.length === 0 && (
+              <p className="text-secondary text-sm py-4">No vehicle fuel summaries.</p>
+            )}
           </div>
         </div>
+      </div>
+
+      {/* Driver safety Ranks */}
+      <div className="card mt-6">
+        <h3 className="font-semibold text-lg mb-4">Driver Safety & Performance Rank</h3>
+        <table className="data-table">
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>Name</th>
+              <th>Trips Managed</th>
+              <th>Safety Score Rating</th>
+            </tr>
+          </thead>
+          <tbody>
+            {driverData.map((driver, index) => (
+              <tr key={index}>
+                <td className="font-medium">#{index + 1}</td>
+                <td>{driver.full_name}</td>
+                <td>{driver.trips}</td>
+                <td>
+                  <span className="font-semibold" style={{ color: driver.safety_score >= 90 ? 'green' : 'orange' }}>
+                    {driver.safety_score}%
+                  </span>
+                </td>
+              </tr>
+            ))}
+            {driverData.length === 0 && (
+              <tr>
+                <td colSpan="4" style={{ textAlign: 'center', color: 'var(--text-secondary)', padding: '2rem' }}>
+                  No performance metrics loaded.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
       </div>
     </div>
   );
