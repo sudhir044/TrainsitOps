@@ -13,7 +13,7 @@ TransitOps is an enterprise-grade fleet management solution designed to streamli
 
 ---
 
-## 🛠️ Tech Stack
+##  Tech Stack
 * **Frontend:** React.js, Tailwind CSS, Axios
 * **Backend:** Node.js, Express.js (Layered Architecture: Routes, Controllers, Services, Middleware, Validators)
 * **Database:** PostgreSQL (Hosted on Neon serverless clusters)
