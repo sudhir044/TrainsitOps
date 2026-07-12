@@ -11,6 +11,13 @@ app.use("/api/vehicles", vehicleRoutes);
 import maintenanceRoutes from "./routes/maintenance.routes.js";
 import fuelRoutes from "./routes/fuel.routes.js";
 import expenseRoutes from "./routes/expense.routes.js";
+import dashboardRoutes from "./routes/dashboard.routes.js";
+
+
+
+import reportRoutes from "./routes/report.routes.js";
+
+app.use("/api/reports", reportRoutes);
 
 
 
@@ -20,6 +27,7 @@ app.use(cors());
 app.use(helmet());
 app.use(express.json());
 app.use("/api/fuel", fuelRoutes);
+app.use("/api/dashboard", dashboardRoutes);
 
 app.get("/", (req, res) => {
     res.json({
