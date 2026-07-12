@@ -1,0 +1,145 @@
+.maintenance-container {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 20px;
+  padding: 24px 0;
+  color: #f3f4f6;
+  font-family: inherit;
+  align-items: start;
+}
+
+@media (max-width: 1024px) {
+  .maintenance-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+.maintenance-card {
+  background-color: #111726; 
+  border: 1px solid #1a2236; 
+  border-radius: 8px;
+  padding: 24px;
+}
+
+.panel-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 24px;
+  color: #ffffff;
+}
+
+.maintenance-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  background-color: #090d16; 
+  border: 1px solid #1e293b;
+  border-radius: 6px;
+  padding: 12px 14px;
+  color: #f3f4f6;
+  font-size: 0.9rem;
+  outline: none;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  border-color: #2563eb;
+}
+
+.submit-btn {
+  background-color: #e65c00; /* Clean orange action block asset */
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 14px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: opacity 0.2s;
+}
+
+.submit-btn:hover {
+  opacity: 0.9;
+}
+
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.maintenance-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.85rem;
+}
+
+.maintenance-table th {
+  padding: 12px;
+  border-bottom: 1px solid #1a2236;
+  color: #4b5563;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+}
+
+.maintenance-table td {
+  padding: 16px 12px;
+  border-bottom: 1px solid #141b2b;
+  color: #cbd5e1;
+}
+
+.empty-row {
+  text-align: center;
+  color: #4b5563;
+  padding: 48px !important;
+  font-style: italic;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.status-in-progress {
+  background-color: rgba(230, 92, 0, 0.1);
+  color: #ff751a;
+  border: 1px solid rgba(230, 92, 0, 0.25);
+}
+
+.status-on-hold {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.25);
+}
+
+.status-scheduled {
+  background-color: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.25);
+}
