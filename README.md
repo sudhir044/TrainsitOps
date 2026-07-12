@@ -101,7 +101,7 @@ Automatically updates:
 
 ---
 
-## 🔧 Maintenance
+##  Maintenance
 
 - Create Maintenance Request
 - Start Maintenance
