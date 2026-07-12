@@ -10,6 +10,9 @@ app.use("/api/vehicles", vehicleRoutes);
 
 import maintenanceRoutes from "./routes/maintenance.routes.js";
 import fuelRoutes from "./routes/fuel.routes.js";
+import expenseRoutes from "./routes/expense.routes.js";
+
+
 
 const app = express();
 
@@ -29,5 +32,6 @@ app.use("/api/drivers", driverRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/trips", tripRoutes);
 app.use("/api/maintenance", maintenanceRoutes);
+app.use("/api/expenses", expenseRoutes);
 
 export default app;
