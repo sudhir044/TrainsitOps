@@ -1,16 +1,15 @@
 import { validationResult } from "express-validator";
 
 import {
-    getVehicleByRegistration,
-    createVehicleService,
-    getAllVehicles,
-    getVehicleById,
-    updateVehicle,
-    deleteVehicle,
-} from "../services/vehicle.service.js";
+    getDriverByLicense,
+    createDriverService,
+    getAllDrivers,
+    getDriverById,
+    updateDriver,
+    deleteDriver,
+} from "../services/driver.service.js";
 
-
-export const createVehicle = async (req, res) => {
+export const createDriver = async (req, res) => {
     try {
         const errors = validationResult(req);
 
@@ -21,23 +20,23 @@ export const createVehicle = async (req, res) => {
             });
         }
 
-        const existingVehicle = await getVehicleByRegistration(
-            req.body.registration_number
+        const existingDriver = await getDriverByLicense(
+            req.body.license_number
         );
 
-        if (existingVehicle) {
+        if (existingDriver) {
             return res.status(409).json({
                 success: false,
-                message: "Vehicle already exists",
+                message: "Driver already exists",
             });
         }
 
-        const vehicle = await createVehicleService(req.body);
+        const driver = await createDriverService(req.body);
 
         return res.status(201).json({
             success: true,
-            message: "Vehicle created successfully",
-            data: vehicle,
+            message: "Driver created successfully",
+            data: driver,
         });
 
     } catch (error) {
@@ -50,124 +49,105 @@ export const createVehicle = async (req, res) => {
     }
 };
 
-
-export const getVehicles = async (req, res) => {
+export const getDrivers = async (req, res) => {
     try {
-        const vehicles = await getAllVehicles();
+        const drivers = await getAllDrivers();
 
         return res.status(200).json({
             success: true,
-            count: vehicles.length,
-            data: vehicles,
+            count: drivers.length,
+            data: drivers,
         });
 
     } catch (error) {
-
         console.error(error);
 
         return res.status(500).json({
             success: false,
             message: "Internal Server Error",
         });
-
     }
 };
 
-
-export const getVehicle = async (req, res) => {
-
+export const getDriver = async (req, res) => {
     try {
+        const driver = await getDriverById(req.params.id);
 
-        const vehicle = await getVehicleById(req.params.id);
-
-        if (!vehicle) {
+        if (!driver) {
             return res.status(404).json({
                 success: false,
-                message: "Vehicle not found",
+                message: "Driver not found",
             });
         }
 
         return res.status(200).json({
             success: true,
-            data: vehicle,
+            data: driver,
         });
 
     } catch (error) {
-
         console.error(error);
 
         return res.status(500).json({
             success: false,
             message: "Internal Server Error",
         });
-
     }
-
 };
 
-
-export const updateVehicleController = async (req, res) => {
-
+export const updateDriverController = async (req, res) => {
     try {
+        const driver = await updateDriver(req.params.id, req.body);
 
-        const vehicle = await updateVehicle(req.params.id, req.body);
-
-        if (!vehicle) {
+        if (!driver) {
             return res.status(404).json({
                 success: false,
-                message: "Vehicle not found",
+                message: "Driver not found",
             });
         }
 
         return res.status(200).json({
             success: true,
-            message: "Vehicle updated successfully",
-            data: vehicle,
+            message: "Driver updated successfully",
+            data: driver,
         });
 
     } catch (error) {
-
         console.error(error);
 
         return res.status(500).json({
             success: false,
             message: "Internal Server Error",
         });
-
     }
-
 };
 
 
-export const deleteVehicleController = async (req, res) => {
-
+export const deleteDriverController = async (req, res) => {
     try {
+        const driver = await getDriverById(req.params.id);
 
-        const vehicle = await getVehicleById(req.params.id);
-
-        if (!vehicle) {
+        if (!driver) {
             return res.status(404).json({
                 success: false,
-                message: "Vehicle not found",
+                message: "Driver not found",
             });
         }
 
-        await deleteVehicle(req.params.id);
+        await deleteDriver(req.params.id);
 
         return res.status(200).json({
-            success: true,
-            message: "Vehicle deleted successfully",
+            success:
+                true,
+            message: "Driver deleted successfully",
         });
 
     } catch (error) {
-
         console.error(error);
 
         return res.status(500).json({
             success: false,
             message: "Internal Server Error",
         });
-
     }
-
 };

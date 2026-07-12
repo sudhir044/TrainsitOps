@@ -1,14 +1,14 @@
 import express from "express";
 
 import {
-    createVehicle,
-    getVehicles,
-    getVehicle,
-    updateVehicleController,
-    deleteVehicleController,
-} from "../controllers/vehicle.controller.js";
+    createDriver,
+    getDrivers,
+    getDriver,
+    updateDriverController,
+    deleteDriverController,
+} from "../controllers/driver.controller.js";
 
-import { createVehicleValidator } from "../validators/vehicle.validator.js";
+import { createDriverValidator } from "../validators/driver.validator.js";
 
 import { authenticate } from "../middleware/auth.middleware.js";
 import { authorize } from "../middleware/role.middleware.js";
@@ -19,27 +19,27 @@ router.post(
     "/",
     authenticate,
     authorize("Fleet Manager"),
-    createVehicleValidator,
-    createVehicle
+    createDriverValidator,
+    createDriver
 );
 
-router.get("/", authenticate, getVehicles);
+router.get("/", authenticate, getDrivers);
 
-router.get("/:id", authenticate, getVehicle);
+router.get("/:id", authenticate, getDriver);
 
 router.put(
     "/:id",
     authenticate,
     authorize("Fleet Manager"),
-    createVehicleValidator,
-    updateVehicleController
+    createDriverValidator,
+    updateDriverController
 );
 
 router.delete(
     "/:id",
     authenticate,
     authorize("Fleet Manager"),
-    deleteVehicleController
+    deleteDriverController
 );
 
 export default router;
